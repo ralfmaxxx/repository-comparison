@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="App" default="all">
+
+	<target name="phpspec" description="runs phpspec tests">
+		<exec executable="bin/phpspec" passthru="true" checkreturn="true">
+			<arg line="run
+                --format=pretty"/>
+		</exec>
+	</target>
+
+	<target name="prepare_database">
+		<exec checkreturn="true" passthru="true" command="php bin/console doctrine:database:drop --env=test --if-exists --force"/>
+		<exec checkreturn="true" passthru="true" command="php bin/console doctrine:database:create --env=test"/>
+		<exec checkreturn="true" passthru="true" command="php bin/console doctrine:migrations:migrate --env=test -n --allow-no-migration"/>
+	</target>
+
+	<target name="behat" description="runs behat tests" depends="prepare_database">
+		<exec executable="bin/behat" passthru="true" checkreturn="true">
+			<arg line="--strict"/>
+		</exec>
+	</target>
+
+	<target name="tests" depends="phpspec,behat" description="runs tests: phpspec and behat"/>
+
+</project>

@@ -1,0 +1,4 @@
+/vendor/
+/symfony/var/*
+/bin/*
+!/bin/console

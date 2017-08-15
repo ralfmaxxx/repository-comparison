@@ -1,0 +1,6 @@
+services:
+#    app.repository.categories:
+#        public: true
+#        class: App\Infrastructure\Doctrine\ORM\Domain\Category\Categories
+#        arguments:
+#            - '@doctrine.orm.default_entity_manager'

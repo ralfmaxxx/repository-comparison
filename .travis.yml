@@ -1,0 +1,19 @@
+sudo: required
+
+language: minimal
+
+services:
+    - docker
+
+environment:
+    - APP_ENV=test
+
+before_install:
+    - docker-compose -f infrastructure/docker/docker-compose.yml up -d
+    - docker-compose -f infrastructure/docker/docker-compose.yml exec -T php /bin/bash -c "wait-for.sh mysql:3306"
+
+install:
+    - docker-compose -f infrastructure/docker/docker-compose.yml exec -T php /bin/bash -c "composer install --no-interaction"
+
+script:
+    - docker-compose -f infrastructure/docker/docker-compose.yml exec -T php /bin/bash -c "bin/phing all"

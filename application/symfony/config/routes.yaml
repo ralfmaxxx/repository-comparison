@@ -1,0 +1,2 @@
+main:
+    resource: "../../src/UserInterface/Symfony/Resources/config/routing/app.yaml"

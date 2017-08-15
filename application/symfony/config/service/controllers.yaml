@@ -1,0 +1,6 @@
+services:
+    app.controller.default:
+        public: true
+        class: App\UserInterface\Symfony\Controller\DefaultController
+        arguments:
+            - '@tactician.commandbus'

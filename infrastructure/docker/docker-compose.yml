@@ -1,0 +1,37 @@
+version: '3'
+services:
+    nginx:
+        build:
+            context: nginx
+        ports:
+            - 80:80
+        links:
+            - php
+        volumes:
+            - ./../../application:/var/www/html
+        container_name: infrastructure_nginx
+
+    php:
+        environment:
+            APP_ENV: $APP_ENV
+            DATABASE_URL: $DATABASE_URL
+            DATABASE_URL_TEST: $DATABASE_URL_TEST
+            GITHUB_OAUTH_TOKEN: $GITHUB_OAUTH_TOKEN
+        build:
+            context: php
+        expose:
+            - 9000
+        links:
+            - mysql
+        volumes:
+            - ./../../application:/var/www/html
+        container_name: infrastructure_php
+
+    mysql:
+        environment:
+            MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+        build:
+            context: mysql
+        expose:
+          - 3306
+        container_name: infrastructure_mysql
