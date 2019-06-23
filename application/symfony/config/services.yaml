@@ -1,7 +1,13 @@
 imports:
-    - { resource: service/controllers.yaml }
-    - { resource: service/repositories.yaml }
-    - { resource: service/command/categories.yaml }
+    - { resource: service/controller/default.yaml }
+    - { resource: service/controller/api.yaml }
+    - { resource: service/repository.yaml }
+    - { resource: service/http.yaml }
+    - { resource: service/url.yaml }
+    - { resource: service/transaction.yaml }
+    - { resource: service/command.yaml }
+    - { resource: service/query.yaml }
+    - { resource: service/normalizer.yaml }
 
 parameters:
 

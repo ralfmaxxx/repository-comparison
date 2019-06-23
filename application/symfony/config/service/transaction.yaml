@@ -1,0 +1,6 @@
+services:
+    app.infrastructure.doctrine.transaction:
+        public: true
+        class: App\Infrastructure\Doctrine\ORM\Application\Transaction
+        arguments:
+            - '@doctrine.orm.default_entity_manager'

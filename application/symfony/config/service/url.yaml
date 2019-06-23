@@ -1,0 +1,4 @@
+services:
+    app.infrastructure.spatie.url.url_parser:
+        public: true
+        class: App\Infrastructure\Spatie\Application\Http\Url\UrlParser

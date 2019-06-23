@@ -2,3 +2,4 @@
 /symfony/var/*
 /bin/*
 !/bin/console
+/public/api.json

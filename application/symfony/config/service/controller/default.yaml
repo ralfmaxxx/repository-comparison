@@ -1,5 +1,5 @@
 services:
-    app.controller.default:
+    app.user_interface.controller.default:
         public: true
         class: App\UserInterface\Symfony\Controller\DefaultController
         arguments:

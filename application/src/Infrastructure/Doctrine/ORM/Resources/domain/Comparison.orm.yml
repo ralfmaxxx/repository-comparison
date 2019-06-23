@@ -1,0 +1,20 @@
+App\Domain\Comparison:
+    type: entity
+    table: comparison
+    id:
+        id:
+            type: string
+            varchar: 100
+            generator: { strategy: NONE }
+    indexes:
+        - { name: efficient_search_by_first_statistics_index, columns: ['first_statistics_id']}
+        - { name: efficient_search_by_second_statistics_index, columns: ['second_statistics_id']}
+    fields:
+        firstStatisticsId:
+            type: string
+            length: 100
+            nullable: false
+        secondStatisticsId:
+            type: string
+            length: 100
+            nullable: false

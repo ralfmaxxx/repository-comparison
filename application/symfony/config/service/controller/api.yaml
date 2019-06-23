@@ -1,0 +1,15 @@
+services:
+    app.user_interface.controller.api.comparison.create:
+        public: true
+        class: App\UserInterface\Symfony\Controller\Api\Comparison\CreateController
+        arguments:
+            - '@tactician.commandbus'
+            - '@app.infrastructure.doctrine.query.comparison_with_statistics'
+            - '@app.user_interface.normalizer.api.comparison_query'
+
+    app.user_interface.controller.api.comparison.get:
+        public: true
+        class: App\UserInterface\Symfony\Controller\Api\Comparison\GetController
+        arguments:
+            - '@app.infrastructure.doctrine.query.comparison_with_statistics'
+            - '@app.user_interface.normalizer.api.comparison_query'

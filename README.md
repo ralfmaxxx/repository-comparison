@@ -49,3 +49,19 @@ and:
 ```bash
 docker-compose -f infrastructure/docker/docker-compose.yml exec php /bin/bash -ic "bin/phing tests"
 ```
+
+## Generating documentation
+
+Please run:
+
+```bash
+docker-compose -f infrastructure/docker/docker-compose.yml exec php /bin/bash -ic "bin/phing documentation"
+```
+
+Visit `http://localhost/api.json`. You have to use some client for user interface. Please try this one: `https://editor.swagger.io/` (or find a docker container).
+
+But keep in mind that you have to turn off CORS to have it up and running if you chose `https://editor.swagger.io/`.
+
+## Remarks
+
+Unfortunately I did not create user interface for API. This can be tested using Postman or documentation.

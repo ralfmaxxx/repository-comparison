@@ -1,0 +1,12 @@
+services:
+    app.infrastructure.doctrine.repository.comparisons:
+        public: true
+        class: App\Infrastructure\Doctrine\ORM\Domain\Repository\Comparisons
+        arguments:
+            - '@doctrine.orm.default_entity_manager'
+
+    app.infrastructure.doctrine.repository.repository_statistics:
+        public: true
+        class: App\Infrastructure\Doctrine\ORM\Domain\Repository\RepositoryStatistics
+        arguments:
+            - '@doctrine.orm.default_entity_manager'

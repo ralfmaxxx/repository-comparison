@@ -1,0 +1,30 @@
+services:
+    app.infrastructure.knp_labs.github.client:
+        public: false
+        class: Github\Client
+
+    app.infrastructure.knp_labs.github.statistics_client:
+        public: false
+        class: App\Infrastructure\KnpLabs\Github\Application\Http\Repository\Statistics\Client
+        arguments:
+            - '@app.infrastructure.knp_labs.github.client'
+
+    app.infrastructure.knp_labs.github.release_client:
+        public: false
+        class: App\Infrastructure\KnpLabs\Github\Application\Http\Repository\Release\Client
+        arguments:
+            - '@app.infrastructure.knp_labs.github.client'
+
+    app.infrastructure.knp_labs.github.pull_request_client:
+        public: false
+        class: App\Infrastructure\KnpLabs\Github\Application\Http\Repository\PullRequest\Client
+        arguments:
+            - '@app.infrastructure.knp_labs.github.client'
+
+    app.infrastructure.knp_labs.http.repository.client:
+        public: true
+        class: App\Infrastructure\KnpLabs\Github\Application\Http\Repository\Client
+        arguments:
+            - '@app.infrastructure.knp_labs.github.statistics_client'
+            - '@app.infrastructure.knp_labs.github.release_client'
+            - '@app.infrastructure.knp_labs.github.pull_request_client'

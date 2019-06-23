@@ -1,0 +1,6 @@
+services:
+    app.user_interface.normalizer.api.comparison_query:
+        public: true
+        class: App\UserInterface\Symfony\Normalizer\Api\ComparisonQueryNormalizer
+        arguments:
+            - '@doctrine.dbal.default_connection'

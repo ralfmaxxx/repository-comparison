@@ -9,5 +9,5 @@ interface Handler
     /**
      * @throws HandlerException
      */
-    public function handle(Command $command) : void;
+    public function handle(Command $command): void;
 }

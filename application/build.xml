@@ -4,6 +4,7 @@
 
 	<import file="phing/quality.xml"/>
 	<import file="phing/tests.xml"/>
+	<import file="phing/documentation.xml"/>
 
 	<target name="all" depends="quality,tests" description="runs quality tools and tests"/>
 </project>

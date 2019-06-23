@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="App" default="all">
+	<target name="openapi" description="generates documentation based on openapi">
+		<exec executable="bin/openapi" passthru="true" checkreturn="true">
+			<arg line="-o public/api.json src/UserInterface/Symfony/Controller/Api/"/>
+		</exec>
+	</target>
+	<target name="documentation" depends="openapi" description="generates documentation for API"/>
+</project>

@@ -1,3 +1,14 @@
 default:
     path: /
-    controller: app.controller.default::execute
+    controller: app.user_interface.controller.default::execute
+    methods: [GET]
+
+api_comparison_create:
+    path: /api/v1/comparison
+    controller: app.user_interface.controller.api.comparison.create::execute
+    methods: [POST]
+
+api_comparison_get:
+    path: /api/v1/comparison/{id}
+    controller: app.user_interface.controller.api.comparison.get::execute
+    methods: [GET]

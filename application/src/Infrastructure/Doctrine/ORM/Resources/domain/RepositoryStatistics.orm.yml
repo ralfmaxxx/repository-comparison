@@ -1,0 +1,44 @@
+App\Domain\RepositoryStatistics:
+    type: entity
+    table: repository_statistics
+    id:
+        id:
+            type: string
+            varchar: 100
+            generator: { strategy: NONE }
+    indexes:
+        - { name: efficient_search_by_status_index, columns: ['status']}
+        - { name: efficient_search_by_name_index, columns: ['name']}
+    fields:
+        username:
+            type: string
+            length: 255
+            nullable: false
+        name:
+            type: string
+            length: 255
+            nullable: false
+        status:
+            type: string
+            length: 50
+            nullable: false
+        forksCount:
+            type: integer
+            nullable: true
+        starsCount:
+            type: integer
+            nullable: true
+        watchersCount:
+            type: integer
+            nullable: true
+        lastReleaseDate:
+            type: datetime_immutable
+            nullable: true
+        openPRCount:
+            column: open_pr_count
+            type: integer
+            nullable: true
+        closedPRCount:
+            column: closed_pr_count
+            type: integer
+            nullable: true

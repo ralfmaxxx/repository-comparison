@@ -1,0 +1,20 @@
+services:
+    app.application.command.comparison.create_comparison_handler:
+        class: App\Application\Command\Comparison\CreateComparisonHandler
+        arguments:
+            - '@app.infrastructure.doctrine.transaction'
+            - '@app.infrastructure.doctrine.repository.comparisons'
+            - '@app.infrastructure.doctrine.repository.repository_statistics'
+            - '@app.infrastructure.spatie.url.url_parser'
+        tags:
+            - { name: tactician.handler, command: App\Application\Command\Comparison\CreateComparison }
+
+    app.application.command.comparison.deliver_statistics_for_comparison_handler:
+        class: App\Application\Command\Comparison\DeliverStatisticsForComparisonHandler
+        arguments:
+            - '@app.infrastructure.doctrine.transaction'
+            - '@app.infrastructure.knp_labs.http.repository.client'
+            - '@app.infrastructure.doctrine.repository.comparisons'
+            - '@app.infrastructure.doctrine.repository.repository_statistics'
+        tags:
+            - { name: tactician.handler, command: App\Application\Command\Comparison\DeliverStatisticsForComparison }

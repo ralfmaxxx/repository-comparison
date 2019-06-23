@@ -1,0 +1,6 @@
+services:
+    app.infrastructure.doctrine.query.comparison_with_statistics:
+        public: true
+        class: App\Infrastructure\Doctrine\Dbal\Application\Query\ComparisonWithStatisticsQuery
+        arguments:
+            - '@doctrine.dbal.default_connection'
