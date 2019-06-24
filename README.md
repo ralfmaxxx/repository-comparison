@@ -1,4 +1,4 @@
-# Application skeleton
+# Repository Comparison
 
 [![Build Status](https://travis-ci.org/ralfmaxxx/repository-comparison.svg?branch=master)](https://travis-ci.org/ralfmaxxx/repository-comparison)
 
