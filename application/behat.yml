@@ -6,7 +6,11 @@ default:
             paths:
                 - '%paths.base%/tests/features/'
             contexts:
-                [ tests\features\bootstrap\AppContext: {kernel: '@kernel'} ]
+                [
+                    tests\features\bootstrap\HooksContext: {kernel: '@kernel'},
+                    tests\features\bootstrap\RequestResponseContext: {kernel: '@kernel'},
+                    tests\features\bootstrap\DataContext: {kernel: '@kernel'}
+                ]
 
     extensions:
         Behat\Symfony2Extension:

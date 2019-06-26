@@ -29,7 +29,10 @@ class Client
         try {
             $statistics = $this->client->repos()->show($repository->getUsername(), $repository->getName());
         } catch (ExceptionInterface $exception) {
-            throw ClientException::createFromPrevious($exception->getMessage(), $exception);
+            throw ClientException::createFromPrevious(
+                sprintf('"%s" - for repository %s', $exception->getMessage(), $repository->getFullName()),
+                $exception
+            );
         }
 
         if (!isset($statistics['forks_count'], $statistics['stargazers_count'], $statistics['subscribers_count'])) {

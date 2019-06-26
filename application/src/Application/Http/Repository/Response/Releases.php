@@ -10,12 +10,22 @@ final class Releases
 {
     private $lastReleaseDate;
 
-    public function __construct(DateTimeImmutable $lastReleaseDate)
+    private function __construct(?DateTimeImmutable $lastReleaseDate)
     {
         $this->lastReleaseDate = $lastReleaseDate;
     }
 
-    public function getLastReleaseDate(): DateTimeImmutable
+    public static function createWithLastReleaseDate(DateTimeImmutable $lastReleaseDate): self
+    {
+        return new self($lastReleaseDate);
+    }
+
+    public static function createWithoutLastRelease(): self
+    {
+        return new self(null);
+    }
+
+    public function getLastReleaseDate(): ?DateTimeImmutable
     {
         return $this->lastReleaseDate;
     }

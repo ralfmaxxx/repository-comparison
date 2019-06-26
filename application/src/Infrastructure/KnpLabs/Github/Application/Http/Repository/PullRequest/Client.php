@@ -7,20 +7,24 @@ namespace App\Infrastructure\KnpLabs\Github\Application\Http\Repository\PullRequ
 use App\Application\Http\Repository\Exception\ClientException;
 use App\Application\Http\Repository\Request\Repository;
 use App\Application\Http\Repository\Response\PullRequests;
+use App\Infrastructure\KnpLabs\Github\Application\Http\Response\Counter\PageCounter;
 use Github\Client as GithubClient;
 use Github\Exception\ExceptionInterface;
 
 class Client
 {
-    private const ALL_STATE = 'all';
     private const OPEN_STATE = 'open';
     private const CLOSED_STATE = 'closed';
 
     private $client;
+    private $pageCounter;
 
-    public function __construct(GithubClient $client)
-    {
+    public function __construct(
+        GithubClient $client,
+        PageCounter $pageCounter
+    ) {
         $this->client = $client;
+        $this->pageCounter = $pageCounter;
     }
 
     /**
@@ -28,47 +32,29 @@ class Client
      */
     public function get(Repository $repository): PullRequests
     {
-        $page = 1;
-
-        $statistics = [
-            'open' => 0,
-            'closed' => 0,
-        ];
-
-        while ($pullRequests = $this->getPullRequests($repository, $page++)) {
-            $this->countStatistics($pullRequests, $statistics);
-        }
-
-        return new PullRequests($statistics['open'], $statistics['closed']);
-    }
-
-    private function getPullRequests(Repository $repository, int $page): array
-    {
         try {
-            return $this->client->pullRequests()->all(
+            $this->client->pullRequests()->all(
                 $repository->getUsername(),
                 $repository->getName(),
-                ['state' => self::ALL_STATE, 'page' => $page]
+                ['state' => self::OPEN_STATE, 'page' => 1, 'per_page' => 1]
             );
+
+            $openPullRequestsCount = $this->pageCounter->count($this->client->getLastResponse());
+
+            $this->client->pullRequests()->all(
+                $repository->getUsername(),
+                $repository->getName(),
+                ['state' => self::CLOSED_STATE, 'page' => 1, 'per_page' => 1]
+            );
+
+            $closedPullRequestsCount = $this->pageCounter->count($this->client->getLastResponse());
         } catch (ExceptionInterface $exception) {
-            throw ClientException::createFromPrevious($exception->getMessage(), $exception);
+            throw ClientException::createFromPrevious(
+                sprintf('Error "%s" - for repository %s', $exception->getMessage(), $repository->getFullName()),
+                $exception
+            );
         }
-    }
 
-    private function countStatistics(array $pullRequests, array &$statistics): void
-    {
-        foreach ($pullRequests as $pullRequest) {
-            if (($pullRequest['state'] ?? '') === self::OPEN_STATE) {
-                $statistics['open']++;
-
-                continue;
-            }
-
-            if (($pullRequest['state'] ?? '') === self::CLOSED_STATE) {
-                $statistics['closed']++;
-
-                continue;
-            }
-        }
+        return new PullRequests($openPullRequestsCount, $closedPullRequestsCount);
     }
 }

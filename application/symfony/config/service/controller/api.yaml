@@ -3,6 +3,7 @@ services:
         public: true
         class: App\UserInterface\Symfony\Controller\Api\Comparison\CreateController
         arguments:
+            - '@app.user_interface.validator.github_repository_name'
             - '@tactician.commandbus'
             - '@app.infrastructure.doctrine.query.comparison_with_statistics'
             - '@app.user_interface.normalizer.api.comparison_query'

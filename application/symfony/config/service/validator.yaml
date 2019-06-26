@@ -1,0 +1,6 @@
+services:
+    app.user_interface.validator.github_repository_name:
+        public: false
+        class: App\UserInterface\Symfony\Validator\GithubRepositoryNameValidator
+        arguments:
+            - '@app.infrastructure.spatie.url.url_parser'

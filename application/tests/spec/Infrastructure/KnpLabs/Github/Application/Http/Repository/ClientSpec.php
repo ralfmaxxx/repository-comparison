@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace tests\spec\App\Infrastructure\KnpLabs\Github\Application\Http\Repository;
 
 use App\Application\Http\Repository\Client as AppilicationClient;
@@ -61,7 +63,7 @@ class ClientSpec extends ObjectBehavior
         $repository = new Repository(self::USERNAME, self::NAME);
 
         $statistics = new Statistics(self::FORKS, self::STARS, self::WATCHERS);
-        $releases = new Releases(new DateTimeImmutable(self::LAST_RELEASE_DATE));
+        $releases = Releases::createWithLastReleaseDate(new DateTimeImmutable(self::LAST_RELEASE_DATE));
         $pullRequests = new PullRequests(self::OPEN_COUNT, self::CLOSED_COUNT);
 
         $expectedInformation = new Information($statistics, $releases, $pullRequests);

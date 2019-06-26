@@ -3,6 +3,10 @@ services:
         public: false
         class: Github\Client
 
+    app.infrastructure.knp_labs.github.response.page_counter:
+        public: false
+        class: App\Infrastructure\KnpLabs\Github\Application\Http\Response\Counter\PageCounter
+
     app.infrastructure.knp_labs.github.statistics_client:
         public: false
         class: App\Infrastructure\KnpLabs\Github\Application\Http\Repository\Statistics\Client
@@ -14,12 +18,14 @@ services:
         class: App\Infrastructure\KnpLabs\Github\Application\Http\Repository\Release\Client
         arguments:
             - '@app.infrastructure.knp_labs.github.client'
+            - '@app.infrastructure.knp_labs.github.response.page_counter'
 
     app.infrastructure.knp_labs.github.pull_request_client:
         public: false
         class: App\Infrastructure\KnpLabs\Github\Application\Http\Repository\PullRequest\Client
         arguments:
             - '@app.infrastructure.knp_labs.github.client'
+            - '@app.infrastructure.knp_labs.github.response.page_counter'
 
     app.infrastructure.knp_labs.http.repository.client:
         public: true

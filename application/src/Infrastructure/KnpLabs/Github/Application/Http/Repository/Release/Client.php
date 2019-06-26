@@ -7,6 +7,7 @@ namespace App\Infrastructure\KnpLabs\Github\Application\Http\Repository\Release;
 use App\Application\Http\Repository\Exception\ClientException;
 use App\Application\Http\Repository\Request\Repository;
 use App\Application\Http\Repository\Response\Releases;
+use App\Infrastructure\KnpLabs\Github\Application\Http\Response\Counter\PageCounter;
 use DateTimeImmutable;
 use Exception;
 use Github\Client as GithubClient;
@@ -18,10 +19,14 @@ class Client
     private const LAST_RELEASE_DATE_BAD_FORMAT_ERROR = 'Last release date is in bad format for repository "%s".';
 
     private $client;
+    private $pageCounter;
 
-    public function __construct(GithubClient $client)
-    {
+    public function __construct(
+        GithubClient $client,
+        PageCounter $pageCounter
+    ) {
         $this->client = $client;
+        $this->pageCounter = $pageCounter;
     }
 
     /**
@@ -30,13 +35,27 @@ class Client
     public function get(Repository $repository): Releases
     {
         try {
-            $lastRelease = $this
-                ->client
-                ->repo()
-                ->releases()
-                ->latest($repository->getUsername(), $repository->getName());
+            $this->client->repo()->releases()
+                ->all(
+                    $repository->getUsername(),
+                    $repository->getName(),
+                    ['per_page' => 1, 'page' => 1]
+                );
+
+            if ($this->pageCounter->count($this->client->getLastResponse()) === 0) {
+                return Releases::createWithoutLastRelease();
+            }
+
+            $lastRelease = $this->client->repo()->releases()
+                ->latest(
+                    $repository->getUsername(),
+                    $repository->getName(),
+                );
         } catch (ExceptionInterface $exception) {
-            throw ClientException::createFromPrevious($exception->getMessage(), $exception);
+            throw ClientException::createFromPrevious(
+                sprintf('Error "%s" - for repository %s', $exception->getMessage(), $repository->getFullName()),
+                $exception
+            );
         }
 
         if (!isset($lastRelease['published_at'])) {
@@ -54,6 +73,6 @@ class Client
             );
         }
 
-        return new Releases($lastReleaseDate);
+        return Releases::createWithLastReleaseDate($lastReleaseDate);
     }
 }

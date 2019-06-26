@@ -14,6 +14,8 @@ It requires `docker` and `docker-compose`.
 
 * `1.1.0` - fix domain
 
+* `1.2.0` - fix performance + better error handling
+
 ## Travis
 
 Check it out [here](https://travis-ci.org/ralfmaxxx/repository-comparison)

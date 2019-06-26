@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Symfony\Request;
 
+use ArrayIterator;
+use IteratorAggregate;
 use Symfony\Component\HttpFoundation\Request;
+use Traversable;
 
-final class CreateComparisonRequest
+final class CreateComparisonRequest implements IteratorAggregate
 {
-    private const GITHUB_HOST = 'https://github.com';
+    private const FIRST_REPOSITORY_FIELD_NAME = 'firstRepository';
+    private const SECOND_REPOSITORY_FIELD_NAME = 'secondRepository';
 
     private $firstRepositoryName;
     private $secondRepositoryName;
@@ -17,16 +21,8 @@ final class CreateComparisonRequest
     {
         $data = json_decode($request->getContent(), true);
 
-        $firstRepositoryName = (string) ($data['firstRepository'] ?? '');
-        $secondRepositoryName = (string) ($data['secondRepository'] ?? '');
-
-        $this->firstRepositoryName = mb_strpos($firstRepositoryName, self::GITHUB_HOST) === false ?
-            sprintf('%s/%s', self::GITHUB_HOST, $firstRepositoryName)
-            : $firstRepositoryName;
-
-        $this->secondRepositoryName = mb_strpos($secondRepositoryName, self::GITHUB_HOST) === false ?
-            sprintf('%s/%s', self::GITHUB_HOST, $secondRepositoryName)
-            : $secondRepositoryName;
+        $this->firstRepositoryName = trim((string) ($data[self::FIRST_REPOSITORY_FIELD_NAME] ?? ''));
+        $this->secondRepositoryName = trim((string) ($data[self::SECOND_REPOSITORY_FIELD_NAME] ?? ''));
     }
 
     public function getFirstRepositoryName(): string
@@ -37,5 +33,15 @@ final class CreateComparisonRequest
     public function getSecondRepositoryName(): string
     {
         return $this->secondRepositoryName;
+    }
+
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator(
+            [
+                self::FIRST_REPOSITORY_FIELD_NAME => $this->firstRepositoryName,
+                self::SECOND_REPOSITORY_FIELD_NAME => $this->secondRepositoryName,
+            ]
+        );
     }
 }

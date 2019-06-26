@@ -6,6 +6,7 @@
         "php": "7.3.6",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-json": "*",
         "knplabs/github-api": "^2.11",
         "league/tactician-bundle": "^1.1",
         "php-http/guzzle6-adapter": "^1.1",

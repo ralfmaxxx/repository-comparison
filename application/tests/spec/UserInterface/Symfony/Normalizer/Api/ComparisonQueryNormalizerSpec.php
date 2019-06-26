@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace tests\spec\App\UserInterface\Symfony\Normalizer\Api;
 
 use App\Application\Query\Model\BasicData;

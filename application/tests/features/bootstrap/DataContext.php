@@ -1,31 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace tests\features\bootstrap;
 
 use App\Domain\Comparison;
 use App\Domain\RepositoryStatistics;
 use Behat\Behat\Context\Context;
-use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use DateTimeImmutable;
-use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Exception;
-use Mockery;
-use PHPUnit\Framework\Assert;
-use RuntimeException;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class AppContext implements Context
+final class DataContext implements Context
 {
     private $kernel;
-
-    /**
-     * @var Response|null
-     */
-    private $response;
 
     public function __construct(KernelInterface $kernel)
     {
@@ -41,7 +29,7 @@ class AppContext implements Context
      */
     public function castRepositoryStatisticsCollection(TableNode $repositoryStatisticsCollection): array
     {
-        $statisticsColllection = [];
+        $statisticsCollection = [];
 
         foreach ($repositoryStatisticsCollection as $repositoryStatistics) {
             $statistics = new RepositoryStatistics(
@@ -58,11 +46,11 @@ class AppContext implements Context
                 (int) $repositoryStatistics['closed_pr_count']
             );
 
-            $statisticsColllection[] = $statistics;
+            $statisticsCollection[] = $statistics;
 
         }
 
-        return $statisticsColllection;
+        return $statisticsCollection;
     }
 
     /**
@@ -85,38 +73,6 @@ class AppContext implements Context
             },
             $comparisons->getHash()
         );
-    }
-
-    /**
-     * @BeforeScenario
-     *
-     * @throws Exception
-     */
-    public function clearDatabase(): void
-    {
-        $entityManager = $this->kernel->getContainer()->get('doctrine')->getManager();
-
-        $purger = new ORMPurger($entityManager);
-        $executor = new ORMExecutor($entityManager, $purger);
-
-        $executor->purge();
-        $entityManager->clear();
-    }
-
-    /**
-     * @AfterScenario
-     */
-    public function closeMockery(): void
-    {
-        Mockery::close();
-    }
-
-    /**
-     * @When I send :type request to :path
-     */
-    public function iSendRequestTo(string $type, string $path): void
-    {
-        $this->response = $this->kernel->handle(Request::create($path, $type));
     }
 
     /**
@@ -149,32 +105,5 @@ class AppContext implements Context
         }
 
         $this->kernel->getContainer()->get('doctrine.orm.entity_manager')->flush();
-    }
-
-    /**
-     * @Then the response status should be :status
-     */
-    public function theResponseStatusShouldBe(int $status): void
-    {
-        if ($this->response === null) {
-            throw new RuntimeException('No response received');
-        }
-
-        Assert::assertEquals($status, $this->response->getStatusCode());
-    }
-
-    /**
-     * @Then the response should be:
-     */
-    public function theResponseShouldBe(PyStringNode $string): void
-    {
-        if ($this->response === null) {
-            throw new RuntimeException('No response received');
-        }
-
-        Assert::assertEquals(
-            json_decode($string->getRaw(), true),
-            json_decode($this->response->getContent(), true)
-        );
     }
 }

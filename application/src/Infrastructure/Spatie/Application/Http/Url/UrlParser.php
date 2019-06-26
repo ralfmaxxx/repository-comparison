@@ -14,6 +14,12 @@ final class UrlParser implements BaseUrlParser
     {
         $parsedUrl = SpatieUrl::fromString($url);
 
-        return new Url($parsedUrl->getHost(), $parsedUrl->getFirstSegment() ?? '', $parsedUrl->getSegment(2) ?? '');
+        return new Url(
+            $parsedUrl->getScheme(),
+            $parsedUrl->getHost(),
+            $parsedUrl->getFirstSegment() ?? '',
+            $parsedUrl->getSegment(2) ?? '',
+            $parsedUrl->getSegment(3) ?? ''
+        );
     }
 }

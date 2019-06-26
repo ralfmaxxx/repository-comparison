@@ -10,6 +10,8 @@ use App\Application\Command\HandlerException;
 use App\Infrastructure\Doctrine\Dbal\Application\Query\ComparisonWithStatisticsQuery;
 use App\UserInterface\Symfony\Normalizer\Api\ComparisonQueryNormalizer;
 use App\UserInterface\Symfony\Request\CreateComparisonRequest;
+use App\UserInterface\Symfony\Validator\Exception\ValidatorException;
+use App\UserInterface\Symfony\Validator\GithubRepositoryNameValidator;
 use League\Tactician\CommandBus;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,6 +41,31 @@ use Symfony\Component\HttpFoundation\Response;
  *      example={
  *          "firstRepository": "https://github.com/ramsey/php-library-skeleton",
  *          "secondRepository": "https://github.com/ramsey/http-range"
+ *      }
+ * )
+ * @OA\Schema(
+ *      schema="ComparisonCreationError",
+ *      type="object",
+ *      allOf={
+ *          @OA\Schema(
+ *              @OA\Property(
+ *                  property="error",
+ *                  type="object",
+ *                  @OA\Property(
+ *                      property="message",
+ *                      type="string",
+ *                      description="Error message."
+ *                  ),
+ *                  @OA\Property(
+ *                      property="fields",
+ *                      type="array",
+ *                      description="List of fields which are invalid. Can be empty.",
+ *                      @OA\Items(
+ *                          @OA\Property(property="name", type="string")
+ *                      )
+ *                  )
+ *              )
+ *          )
  *      }
  * )
  * @OA\Schema(
@@ -111,15 +138,20 @@ use Symfony\Component\HttpFoundation\Response;
  */
 final class CreateController
 {
+    private const UNEXPECTED_BEHAVIOR = 'Unexpected behavior';
+
+    private $repositoryNameValidator;
     private $commandBus;
     private $query;
     private $normalizer;
 
     public function __construct(
+        GithubRepositoryNameValidator $repositoryNameValidator,
         CommandBus $commandBus,
         ComparisonWithStatisticsQuery $query,
         ComparisonQueryNormalizer $normalizer
     ) {
+        $this->repositoryNameValidator = $repositoryNameValidator;
         $this->commandBus = $commandBus;
         $this->query = $query;
         $this->normalizer = $normalizer;
@@ -146,35 +178,76 @@ final class CreateController
      *          description="Comparison was created."
      *      ),
      *      @OA\Response(
+     *          response="422",
+     *          @OA\JsonContent(
+     *              ref="#/components/schemas/ComparisonCreationError"
+     *          ),
+     *          description="There was a validation error."
+     *      ),
+     *      @OA\Response(
      *          response="500",
+     *          @OA\JsonContent(
+     *              ref="#/components/schemas/ComparisonCreationError"
+     *          ),
      *          description="Internal server problem."
      *      )
      * )
      */
     public function execute(Request $request): Response
     {
-        $comparisonId = Uuid::uuid4()->toString();
-
         $createComparisonRequest = new CreateComparisonRequest($request);
 
-        $createComparisonCommand = new CreateComparison(
-            $comparisonId,
-            $createComparisonRequest->getFirstRepositoryName(),
-            $createComparisonRequest->getSecondRepositoryName()
-        );
-        $deliverStatisticsCommand = new DeliverStatisticsForComparison($comparisonId);
+        foreach ($createComparisonRequest as $fieldName => $fieldValue) {
+            try {
+                $this->repositoryNameValidator->validate($fieldValue);
+            } catch (ValidatorException $exception) {
+                return new JsonResponse(
+                    [
+                        'error' => [
+                            'message' => $exception->getMessage(),
+                            'fields' => [['name' => $fieldName]],
+                        ]
+                    ],
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+            }
+        }
+
+        $comparisonId = Uuid::uuid4()->toString();
 
         try {
-            $this->commandBus->handle($createComparisonCommand);
-            $this->commandBus->handle($deliverStatisticsCommand);
+            $this->commandBus->handle(
+                new CreateComparison(
+                    $comparisonId,
+                    $createComparisonRequest->getFirstRepositoryName(),
+                    $createComparisonRequest->getSecondRepositoryName()
+                )
+            );
+            $this->commandBus->handle(new DeliverStatisticsForComparison($comparisonId));
         } catch (HandlerException $exception) {
-            return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new JsonResponse(
+                [
+                    'error' => [
+                        'message' => $exception->getMessage(),
+                        'fields' => [],
+                    ]
+                ],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
 
         $comparison = $this->query->findById($comparisonId);
 
         if (is_null($comparison)) {
-            return new JsonResponse(null, Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new JsonResponse(
+                [
+                    'error' => [
+                        'message' => self::UNEXPECTED_BEHAVIOR,
+                        'fields' => [],
+                    ]
+                ],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
 
         return new JsonResponse(

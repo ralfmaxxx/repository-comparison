@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace tests\spec\App\Infrastructure\KnpLabs\Github\Application\Http\Repository\Statistics;
 
 use App\Application\Http\Repository\Exception\ClientException;
@@ -79,7 +81,7 @@ class ClientSpec extends ObjectBehavior
             ->duringGet($repository);
     }
 
-    function it_throws_an_exception_when_could_not_fetch_data_using_client(GithubClient $client, Repo $repos)
+    function it_throws_an_exception_when_could_not_fetch_data(GithubClient $client, Repo $repos)
     {
         $repository = new Repository(self::USERNAME, self::NAME);
 

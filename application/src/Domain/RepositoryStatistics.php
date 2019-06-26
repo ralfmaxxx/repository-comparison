@@ -43,7 +43,7 @@ final class RepositoryStatistics
         int $forksCount,
         int $starsCount,
         int $watchersCount,
-        DateTimeImmutable $lastReleaseDate,
+        ?DateTimeImmutable $lastReleaseDate,
         int $openPRCount,
         int $closedPRCount
     ): void {

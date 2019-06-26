@@ -8,6 +8,7 @@ imports:
     - { resource: service/command.yaml }
     - { resource: service/query.yaml }
     - { resource: service/normalizer.yaml }
+    - { resource: service/validator.yaml }
 
 parameters:
 
