@@ -6,6 +6,14 @@
 
 It requires `docker` and `docker-compose`.
 
+## Versions
+
+* `1.0.0` - on Monday (this tag can be used for checking this)
+
+* `1.0.1` - remove not used files
+
+* `1.1.0` - fix domain
+
 ## Travis
 
 Check it out [here](https://travis-ci.org/ralfmaxxx/repository-comparison)

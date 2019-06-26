@@ -56,19 +56,4 @@ final class RepositoryStatistics
         $this->openPRCount = $openPRCount;
         $this->closedPRCount = $closedPRCount;
     }
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function getUsername(): string
-    {
-        return $this->username;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
 }

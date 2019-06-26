@@ -16,14 +16,4 @@ final class Comparison
         $this->firstStatisticsId = $firstStatisticsId;
         $this->secondStatisticsId = $secondStatisticsId;
     }
-
-    public function getFirstStatisticsId(): string
-    {
-        return $this->firstStatisticsId;
-    }
-
-    public function getSecondStatisticsId(): string
-    {
-        return $this->secondStatisticsId;
-    }
 }

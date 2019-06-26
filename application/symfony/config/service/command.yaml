@@ -14,7 +14,7 @@ services:
         arguments:
             - '@app.infrastructure.doctrine.transaction'
             - '@app.infrastructure.knp_labs.http.repository.client'
-            - '@app.infrastructure.doctrine.repository.comparisons'
+            - '@app.infrastructure.doctrine.query.comparison_with_statistics'
             - '@app.infrastructure.doctrine.repository.repository_statistics'
         tags:
             - { name: tactician.handler, command: App\Application\Command\Comparison\DeliverStatisticsForComparison }
