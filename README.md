@@ -12,9 +12,9 @@ It requires `docker` and `docker-compose`.
 
 * `1.0.1` - remove not used files
 
-* `1.1.0` - fix domain
+* `1.1.0` - small fix domain
 
-* `1.2.0` - fix performance + better error handling
+* `1.2.1` - fix performance + better error handling + domain fix
 
 ## Travis
 

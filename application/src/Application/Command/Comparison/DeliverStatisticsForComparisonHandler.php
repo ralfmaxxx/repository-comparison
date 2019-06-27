@@ -10,8 +10,8 @@ use App\Application\Command\HandlerException;
 use App\Application\Http\Repository\Client as HttpRepositoryClient;
 use App\Application\Http\Repository\Exception\ClientException;
 use App\Application\Http\Repository\Request\Repository;
-use App\Application\Query\ComparisonWithStatisticsQuery;
 use App\Application\Transaction;
+use App\Domain\Repository\Comparisons;
 use App\Domain\Repository\RepositoryStatistics;
 
 final class DeliverStatisticsForComparisonHandler implements Handler
@@ -20,18 +20,18 @@ final class DeliverStatisticsForComparisonHandler implements Handler
 
     private $transaction;
     private $client;
-    private $query;
+    private $comparisons;
     private $repositoryStatistics;
 
     public function __construct(
         Transaction $transaction,
         HttpRepositoryClient $client,
-        ComparisonWithStatisticsQuery $query,
+        Comparisons $comparisons,
         RepositoryStatistics $repositoryStatistics
     ) {
         $this->transaction = $transaction;
         $this->client = $client;
-        $this->query = $query;
+        $this->comparisons = $comparisons;
         $this->repositoryStatistics = $repositoryStatistics;
     }
 
@@ -44,7 +44,7 @@ final class DeliverStatisticsForComparisonHandler implements Handler
     {
         $this->transaction->begin();
 
-        $comparison = $this->query->findById($command->getComparisonId());
+        $comparison = $this->comparisons->findOneById($command->getComparisonId());
 
         if (is_null($comparison)) {
             $this->transaction->rollback();
@@ -54,10 +54,10 @@ final class DeliverStatisticsForComparisonHandler implements Handler
 
         $firstRepositoryStatistics = $this
             ->repositoryStatistics
-            ->findOneById($comparison->getFirstRepositoryStatistics()->getBasicData()->getId());
+            ->findOneById($comparison->getFirstStatisticsId());
         $secondRepositoryStatistics = $this
             ->repositoryStatistics
-            ->findOneById($comparison->getSecondRepositoryStatistics()->getBasicData()->getId());
+            ->findOneById($comparison->getSecondStatisticsId());
 
         if (is_null($firstRepositoryStatistics) || is_null($secondRepositoryStatistics)) {
             $this->transaction->rollback();
@@ -68,14 +68,14 @@ final class DeliverStatisticsForComparisonHandler implements Handler
         try {
             $statisticsForFirstRepository = $this->client->getInformation(
                 new Repository(
-                    $comparison->getFirstRepositoryStatistics()->getBasicData()->getUsername(),
-                    $comparison->getFirstRepositoryStatistics()->getBasicData()->getName()
+                    $firstRepositoryStatistics->getUsername(),
+                    $firstRepositoryStatistics->getName()
                 )
             );
             $statisticsForSecondRepository = $this->client->getInformation(
                 new Repository(
-                    $comparison->getSecondRepositoryStatistics()->getBasicData()->getUsername(),
-                    $comparison->getSecondRepositoryStatistics()->getBasicData()->getName()
+                    $secondRepositoryStatistics->getUsername(),
+                    $secondRepositoryStatistics->getName()
                 )
             );
         } catch (ClientException $exception) {
