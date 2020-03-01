@@ -15,5 +15,10 @@
 			<arg line="--min-tokens=40 ${package_src_directory}"/>
 		</exec>
 	</target>
-	<target name="quality" depends="phpcs,phpmd,phpcpd" description="runs code quality tools: phpmd, phpcs and phpcpd"/>
+	<target name="phpstan" description="runs phpstan">
+		<exec executable="bin/phpstan" passthru="true" checkreturn="true">
+			<arg line="analyze -l 4 -c phing/quality/phpstan.neon ${package_src_directory}"/>
+		</exec>
+	</target>
+	<target name="quality" depends="phpcs,phpmd,phpcpd,phpstan" description="runs code quality tools: phpmd, phpcs, phpstan and phpcpd"/>
 </project>

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Doctrine\ORM\Domain\Repository;
 
-use App\Domain\Repository\CouldNotAddException;
+use App\Domain\Repository\Exception\CouldNotAddException;
 use App\Domain\Repository\RepositoryStatistics as RepositoryStatisticsRepository;
 use App\Domain\RepositoryStatistics as Statistics;
 use Doctrine\ORM\EntityManagerInterface;

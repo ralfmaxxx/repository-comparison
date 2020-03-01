@@ -6,7 +6,7 @@ namespace App\Infrastructure\Doctrine\ORM\Domain\Repository;
 
 use App\Domain\Comparison;
 use App\Domain\Repository\Comparisons as ComparisonRepository;
-use App\Domain\Repository\CouldNotAddException;
+use App\Domain\Repository\Exception\CouldNotAddException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;

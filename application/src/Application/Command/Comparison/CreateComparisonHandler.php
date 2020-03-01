@@ -11,7 +11,7 @@ use App\Application\Http\Url\UrlParser;
 use App\Application\Transaction;
 use App\Domain\Comparison;
 use App\Domain\Repository\Comparisons;
-use App\Domain\Repository\CouldNotAddException;
+use App\Domain\Repository\Exception\CouldNotAddException;
 use App\Domain\Repository\RepositoryStatistics;
 use App\Domain\RepositoryStatistics as Statistics;
 use Ramsey\Uuid\Uuid;
