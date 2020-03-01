@@ -1,0 +1,10 @@
+parameters:
+    fileExtensions:
+        - php
+    ignoreErrors:
+        -
+            message: '#Call to an undefined method [a-zA-Z0-9\\_]+::getComparisonId\(\)#'
+            path: ../../src/Application/Command/Comparison/DeliverStatisticsForComparisonHandler.php
+        -
+            message: '#Call to an undefined method [a-zA-Z0-9\\_]+::(getFirstRepositoryName|getSecondRepositoryName|getId)\(\)#'
+            path: ../../src/Application/Command/Comparison/CreateComparisonHandler.php
